@@ -196,7 +196,7 @@ class BoardUI:
         winner = self.logic.check_win_condition()
         if winner > 0:
             self.logic.game_over = True
-            messagebox.showinfo("Match Finished", f"Player {winner} has claimed victory!")
+            messagebox.showinfo("Match Finished", f"Player {winner} has won !")
 
     def update_ui_labels(self):
         if self.logic.current_player == 1:
