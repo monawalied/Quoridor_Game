@@ -20,11 +20,11 @@ class BoardUI:
         self.main_frame = tk.Frame(root, bg="#1e2732")
         self.main_frame.pack(pady=20, padx=20)
 
-        # 9x9 Board Canvas [cite: 9, 31]
+        # 9x9 Board Canvas 
         self.canvas = tk.Canvas(self.main_frame, width=board_width, height=board_width, bg="#111923", highlightthickness=0)
         self.canvas.grid(row=0, column=0, padx=10, pady=5)
 
-        # UI Info labels for Wall Count and Turns [cite: 41, 42]
+        # UI Info labels for Wall Count and Turns 
         self.info_frame = tk.Frame(self.main_frame, bg="#1e2732")
         self.info_frame.grid(row=1, column=0, pady=5)
         
@@ -90,7 +90,7 @@ class BoardUI:
                 self.canvas.create_rectangle(x1, y1, x2, y2, fill="#2c3e50", outline="#34495e", width=1)
 
     def draw_pawns(self):
-        # Draw Player 1 (Red) [cite: 11]
+        # Draw Player 1 (Red) 
         r1, c1 = self.logic.player1_pos
         x1 = c1 * (self.cell_size + self.wall_thickness)
         y1 = r1 * (self.cell_size + self.wall_thickness)
@@ -103,7 +103,7 @@ class BoardUI:
             width=2
         )
         
-        # Draw Player 2 (Blue) [cite: 11]
+        # Draw Player 2 (Blue) 
         r2, c2 = self.logic.player2_pos
         x2 = c2 * (self.cell_size + self.wall_thickness)
         y2 = r2 * (self.cell_size + self.wall_thickness)
@@ -116,7 +116,7 @@ class BoardUI:
         )
 
     def draw_walls(self):
-        # Draw Locked Horizontal Walls (2 squares long) [cite: 21]
+        # Draw Locked Horizontal Walls 
         for (r, c) in self.logic.walls_h:
             x1 = c * (self.cell_size + self.wall_thickness)
             y1 = (r + 1) * (self.cell_size + self.wall_thickness) - self.wall_thickness
@@ -124,7 +124,7 @@ class BoardUI:
             y2 = y1 + self.wall_thickness
             self.canvas.create_rectangle(x1, y1, x2, y2, fill="#f1c40f", outline="")
 
-        # Draw Locked Vertical Walls (2 squares long) [cite: 21]
+        # Draw Locked Vertical Walls 
         for (r, c) in self.logic.walls_v:
             x1 = (c + 1) * (self.cell_size + self.wall_thickness) - self.wall_thickness
             y1 = r * (self.cell_size + self.wall_thickness)
