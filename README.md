@@ -68,6 +68,7 @@ quoridor/
 ├── ai.py            # AI decision making logic (Easy / Medium / Hard)
 └── README.md        # Project documentation
 
+```
 ---
 
 ## Demo Video
