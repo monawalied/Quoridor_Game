@@ -3,11 +3,8 @@ import tkinter as tk
 from tkinter import messagebox
 from game_logic import GameLogic
 from Ai_Agent import get_ai_move
-
-
-# ---------------------------------------------------------------------------
-# Mode Selection Screen
-# ---------------------------------------------------------------------------
+from copy import deepcopy
+from tkinter import ttk
 
 class ModeSelectScreen:
     def __init__(self, root, on_start):
@@ -74,9 +71,6 @@ class ModeSelectScreen:
         self.on_start(mode, difficulty)
 
 
-# ---------------------------------------------------------------------------
-# Main Board UI
-# ---------------------------------------------------------------------------
 
 class BoardUI:
     def __init__(self, root, mode="hvh", difficulty=None):
@@ -84,6 +78,8 @@ class BoardUI:
         self.mode       = mode
         self.difficulty = difficulty
         self.logic      = GameLogic()
+        self.undo_stack = []
+        self.redo_stack = []
 
         self.cell_size        = 45
         self.wall_thickness   = 10
@@ -122,6 +118,28 @@ class BoardUI:
 
         self.button_frame = tk.Frame(self.main_frame, bg="#1e2732")
         self.button_frame.grid(row=3, column=0, pady=10)
+        tk.Button(
+            self.button_frame,
+            text="Undo",
+            command=self.undo_move,
+            bg="#f39c12",
+            fg="white",
+            font=("Arial", 12, "bold"),
+            padx=15,
+            pady=5,
+
+        ).pack(side="left", padx=8)
+        tk.Button(
+            self.button_frame,
+            text="Redo",
+            command=self.redo_move,
+            bg="#27ae60",
+            fg="white",
+            font=("Arial", 12, "bold"),
+            padx=15,
+            pady=5,
+            relief="flat"
+        ).pack(side="left", padx=8)
 
         tk.Button(self.button_frame, text="Reset Game", command=self.restart_game_ui,
                   bg="#e74c3c", fg="white", font=("Arial", 12, "bold"),
@@ -159,6 +177,10 @@ class BoardUI:
         self.draw_hover_preview()
         self.draw_pawns()
         self.update_ui_labels()
+
+    def save_state(self):
+        self.undo_stack.append(deepcopy(self.logic))
+        self.redo_stack.clear()
 
     def draw_board_cells(self):
         for r in range(self.logic.board_size):
@@ -240,7 +262,6 @@ class BoardUI:
             self.hover_wall = None
         self.refresh_display()
 
-    # ── Click handler ────────────────────────────────────────────────────────
 
     def on_canvas_click(self, event):
         if self.logic.game_over:
@@ -252,6 +273,7 @@ class BoardUI:
         if self.hover_wall:
             (r, c), orient = self.hover_wall
             if self.logic.is_wall_placement_valid(r, c, orient):
+                self.save_state()
                 self.logic.place_wall(r, c, orient)
                 self.hover_wall = None
                 self.check_match_status()
@@ -268,6 +290,8 @@ class BoardUI:
             opp_pos    = self.logic.player2_pos if self.logic.current_player == 1 else self.logic.player1_pos
 
             if (row, col) in self.logic.get_valid_moves(active_pos, opp_pos):
+                self.save_state()
+
                 self.logic.move_pawn(row, col)
                 self.check_match_status()
                 self._maybe_trigger_ai()
@@ -326,6 +350,8 @@ class BoardUI:
         self.p2_label.config(text=f"Blue Walls Left: {self.logic.player2_walls_left}")
 
     def restart_game_ui(self):
+        self.undo_stack.clear()
+        self.redo_stack.clear()
         self.logic.reset_state()
         self.hover_wall       = None
         self.wall_orientation = 'H'
@@ -336,3 +362,19 @@ class BoardUI:
         self.root.unbind("<space>")
         from main import launch_menu
         launch_menu(self.root)
+
+    def undo_move(self):
+        if not self.undo_stack:
+            return
+
+        self.redo_stack.append(deepcopy(self.logic))
+        self.logic = self.undo_stack.pop()
+        self.refresh_display()
+
+    def redo_move(self):
+        if not self.redo_stack:
+            return
+
+        self.undo_stack.append(deepcopy(self.logic))
+        self.logic = self.redo_stack.pop()
+        self.refresh_display()
