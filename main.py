@@ -1,18 +1,19 @@
 # main.py
 import tkinter as tk
-from board_ui import BoardUI
+from board_ui import BoardUI, ModeSelectScreen
 
-class QuoridorApp:
-    def __init__(self, root):
-        self.root = root
-        self.root.title("Quoridor Strategy Engine")
-        
-        self.root.geometry("700x680") 
-        self.root.configure(bg="#1e2732")
-        
-        self.board_screen = BoardUI(self.root)
+
+def launch_menu(root):
+    def on_start(mode, difficulty):
+        BoardUI(root, mode=mode, difficulty=difficulty)
+    ModeSelectScreen(root, on_start)
+
 
 if __name__ == "__main__":
     root = tk.Tk()
-    app = QuoridorApp(root)
+    root.title("Quoridor Strategy Engine")
+    root.geometry("700x700")
+    root.configure(bg="#1e2732")
+    root.resizable(False, False)
+    launch_menu(root)
     root.mainloop()
