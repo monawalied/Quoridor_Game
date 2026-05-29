@@ -69,3 +69,9 @@ quoridor/
 └── README.md        # Project documentation
 
 ---
+
+## Demo Video
+
+[Watch the demo here] linkkkkkkkkkkkk
+
+---
